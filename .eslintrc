@@ -1,3 +1,7 @@
 {
-  "extends": ["./node_modules/frans-scripts/eslint.js"]
+  "extends": ["./node_modules/frans-scripts/eslint.js"],
+  "rules": {
+    "global-require": "off",
+    "import/no-dynamic-require": "off"
+  }
 }
