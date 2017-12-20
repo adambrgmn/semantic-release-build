@@ -32,10 +32,7 @@ test('Skips extra -- when packagemanger is yarn', async () => {
   const { calls } = spawn.sync.mock;
 
   expect(calls.length).toBe(3);
-  expect(calls[2]).toEqual([
-    'yarn',
-    ['run', 'build', '--out-dir', 'build'],
-  ]);
+  expect(calls[2]).toEqual(['yarn', ['run', 'build', '--out-dir', 'build']]);
 });
 
 test('Throws if options.flags is set but not as string', async () => {

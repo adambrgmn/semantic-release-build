@@ -9,7 +9,7 @@ jest.mock('read-pkg-up');
 
 test('utils.hasFile', async () => {
   await expect(hasFile('package.json')).resolves.toBe(true);
-  
+
   fs.__setAccess(false);
   await expect(hasFile('no-file.js')).resolves.toBe(false);
 });
