@@ -4,6 +4,10 @@
   "description": "Run npm run build in publish step of semantic-release",
   "main": "dist/index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adambrgmn/semantic-release-build.git"
+  },
   "scripts": {
     "build": "frans-scripts build",
     "lint": "frans-scripts lint",
