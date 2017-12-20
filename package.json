@@ -25,7 +25,7 @@
     "which": "^1.3.0"
   },
   "devDependencies": {
-    "frans-scripts": "^1.2.0"
+    "frans-scripts": "^1.3.0"
   },
   "config": {
     "commitizen": {
