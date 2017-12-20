@@ -4,30 +4,39 @@ const fs = require('fs');
 const which = promisify(require('which'));
 const readPkgUp = require('read-pkg-up');
 
-const exists = promisify(fs.exists);
+const access = promisify(fs.access);
 const realpath = promisify(fs.realpath);
 
 const hasFile = async file => {
   const { path: pkgPath } = await readPkgUp({
-    cwd: await realpath(process.cwd()),
+    cwd: await realpath(process.cwd(), null),
   });
 
   const projectDir = path.dirname(pkgPath);
   const fromRoot = (...p) => path.join(projectDir, ...p);
-  return exists(fromRoot(file));
+
+  try {
+    await access(fromRoot(file), fs.constants.F_OK);
+    return true;
+  } catch (err) {
+    return false;
+  }
 };
 
 const getPackageManager = async () => {
   try {
     await which('yarn');
   } catch (err) {
-    return which('npm');
+    return 'npm';
   }
 
-  if (await hasFile('yarn.lock')) return 'yarn';
+  const hasYarnLockFile = await hasFile('yarn.lock');
+  if (hasYarnLockFile) return 'yarn';
+
   return 'npm';
 };
 
 module.exports = {
+  hasFile,
   getPackageManager,
 };
