@@ -13,19 +13,20 @@
     "lint": "frans-scripts lint",
     "test": "frans-scripts test",
     "format": "frans-scripts format",
-    "validate": "frans-scripts validate",
-    "precommit": "frans-scripts precommit"
+    "precommit": "frans-scripts precommit",
+    "validate": "yarn run lint && yarn run test --coverage && yarn run build",
+    "release": "frans-scripts release"
   },
   "files": ["dist"],
   "keywords": ["semantic-release"],
   "dependencies": {
-    "cross-spawn": "^5.1.0",
-    "cz-conventional-changelog": "^2.1.0",
+    "execa": "^0.8.0",
     "read-pkg-up": "^3.0.0",
     "which": "^1.3.0"
   },
   "devDependencies": {
-    "frans-scripts": "^1.3.0"
+    "cz-conventional-changelog": "^2.1.0",
+    "frans-scripts": "2.0.2"
   },
   "config": {
     "commitizen": {
