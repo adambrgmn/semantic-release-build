@@ -55,7 +55,7 @@ You don't have to set `npm` or `yarn` explicitly. By default it will run
 
 Inside `package.json`:
 
-```json
+```js
 "release": {
   // ...your other plugins settings
   "publish": [
@@ -80,7 +80,7 @@ Note that you don't have to attatch the extra `--` which is usually required by
 
 Inside `package.json`:
 
-```json
+```js
 "release": {
   // ...your other plugins settings
   "publish": [
