@@ -5,27 +5,45 @@ const which = promisify(require('which'));
 const readPkgUp = require('read-pkg-up');
 
 const access = promisify(fs.access);
-const realpath = promisify(fs.realpath);
 
-const hasFile = file =>
-  realpath(process.cwd(), null)
-    .then(cwd => readPkgUp({ cwd }))
-    .then(({ path: pkgPath }) => {
-      const projectDir = path.dirname(pkgPath);
-      const fromRoot = (...p) => path.join(projectDir, ...p);
+let pkgData = null;
+const getPkgData = () => {
+  if (pkgData) return Promise.resolve(pkgData);
 
-      return access(fromRoot(file), fs.constants.F_OK).then(
-        () => true,
-        () => false,
-      );
-    });
+  return readPkgUp().then(data => {
+    pkgData = { ...data, cached: true };
+    return { ...data, cached: false };
+  });
+};
 
-const getPackageManager = () =>
-  Promise.all([which('yarn'), hasFile('yarn.lock')])
-    .then(([hasBin, hasLockFile]) => (hasBin && hasLockFile ? 'yarn' : 'npm'))
-    .catch(() => 'npm');
+const hasFile = async file => {
+  const { path: pkgPath } = await getPkgData();
+  const projectDir = path.dirname(pkgPath);
+  const fromRoot = (...p) => path.join(projectDir, ...p);
+
+  try {
+    await access(fromRoot(file), fs.constants.F_OK);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+const getPackageManager = async () => {
+  try {
+    const [hasBin, hasLockFile] = await Promise.all([
+      which('yarn'),
+      hasFile('yarn.lock'),
+    ]);
+
+    return hasBin && hasLockFile ? 'yarn' : 'npm';
+  } catch (err) {
+    return 'npm';
+  }
+};
 
 module.exports = {
+  getPkgData,
   hasFile,
   getPackageManager,
 };
