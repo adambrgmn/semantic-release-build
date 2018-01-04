@@ -1,33 +1,45 @@
 /* eslint-disable no-underscore-dangle */
-const fs = require('fs');
-const which = require('which');
-const { hasFile, getPackageManager } = require('../utils');
+import fs from 'fs';
+import which from 'which';
+import * as utils from '../utils';
 
+jest.mock('read-pkg-up');
 jest.mock('fs');
 jest.mock('which');
-jest.mock('read-pkg-up');
+
+beforeEach(() => {
+  jest.resetAllMocks();
+});
+
+test('utils.getPkgData', async () => {
+  const data = await utils.getPkgData();
+  expect(data.path).toBe('/package.json');
+  expect(data.cached).toBe(false);
+
+  expect((await utils.getPkgData()).cached).toBe(true);
+});
 
 test('utils.hasFile', async () => {
-  await expect(hasFile('package.json')).resolves.toBe(true);
+  await expect(utils.hasFile('package.json')).resolves.toBe(true);
 
   fs.__setAccess(false);
-  await expect(hasFile('no-file.js')).resolves.toBe(false);
+  await expect(utils.hasFile('no-file.js')).resolves.toBe(false);
 });
 
 test('utils.getPackageManager', async () => {
   fs.__setAccess(true);
   which.__setBinAccess(true);
-  expect(await getPackageManager()).toBe('yarn');
+  expect(await utils.getPackageManager()).toBe('yarn');
 
   fs.__setAccess(false);
   which.__setBinAccess(true);
-  expect(await getPackageManager()).toBe('npm');
+  expect(await utils.getPackageManager()).toBe('npm');
 
   fs.__setAccess(true);
   which.__setBinAccess(false);
-  expect(await getPackageManager()).toBe('npm');
+  expect(await utils.getPackageManager()).toBe('npm');
 
   fs.__setAccess(false);
   which.__setBinAccess(false);
-  expect(await getPackageManager()).toBe('npm');
+  expect(await utils.getPackageManager()).toBe('npm');
 });

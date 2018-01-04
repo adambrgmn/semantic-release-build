@@ -7,7 +7,10 @@ const __setPackageManager = pm => {
 
 const getPackageManager = async () => __packageManager;
 
+const getPkgData = async () => ({ path: '/package.json' });
+
 module.exports = {
+  getPkgData,
   getPackageManager,
   __setPackageManager,
 };

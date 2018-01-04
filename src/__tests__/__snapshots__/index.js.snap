@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Accepts flags as config 1`] = `
+Array [
+  Array [
+    "npm",
+    Array [
+      "run",
+      "build",
+      "--",
+      "--out-dir",
+      "build",
+    ],
+  ],
+]
+`;
+
+exports[`Calls execa 1`] = `
+Array [
+  Array [
+    "npm",
+    Array [
+      "run",
+      "build",
+    ],
+  ],
+]
+`;
+
+exports[`Skips extra -- when packagemanger is yarn 1`] = `
+Array [
+  Array [
+    "yarn",
+    Array [
+      "run",
+      "build",
+      "--out-dir",
+      "build",
+    ],
+  ],
+]
+`;

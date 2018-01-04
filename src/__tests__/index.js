@@ -1,45 +1,40 @@
 /* eslint-disable no-underscore-dangle */
+import execa from 'execa';
+import * as utils from '../utils';
+import { publish } from '../index';
 
-const { publish } = require('..');
-const spawn = require('cross-spawn');
-const utils = require('../utils');
-
-jest.mock('cross-spawn');
+jest.mock('fs');
+jest.mock('execa');
 jest.mock('../utils');
 
-test('Calling cross-spawn', async () => {
-  await publish();
-  const { calls } = spawn.sync.mock;
+const logger = { log: jest.fn() };
+const getReleaseConfig = () => ({ nextRelease: { version: '1.0.0' }, logger });
 
-  expect(calls.length).toBe(1);
-  expect(calls[0]).toEqual(['npm', ['run', 'build']]);
+beforeEach(() => {
+  jest.resetAllMocks();
+});
+
+test('Calls execa', async () => {
+  await publish({}, getReleaseConfig());
+  expect(execa.mock.calls).toMatchSnapshot();
 });
 
 test('Accepts flags as config', async () => {
-  await publish({ flags: '--out-dir build' });
-  const { calls } = spawn.sync.mock;
-
-  expect(calls.length).toBe(2);
-  expect(calls[1]).toEqual([
-    'npm',
-    ['run', 'build', '--', '--out-dir', 'build'],
-  ]);
+  await publish({ flags: '--out-dir build' }, getReleaseConfig());
+  expect(execa.mock.calls).toMatchSnapshot();
 });
 
 test('Skips extra -- when packagemanger is yarn', async () => {
   utils.__setPackageManager('yarn');
-  await publish({ flags: '--out-dir build' });
-  const { calls } = spawn.sync.mock;
-
-  expect(calls.length).toBe(3);
-  expect(calls[2]).toEqual(['yarn', ['run', 'build', '--out-dir', 'build']]);
+  await publish({ flags: '--out-dir build' }, getReleaseConfig());
+  expect(execa.mock.calls).toMatchSnapshot();
 });
 
 test('Throws if options.flags is set but not as string', async () => {
-  await expect(publish({ flags: 123 })).rejects.toThrow();
+  await expect(publish({ flags: 123 }, getReleaseConfig())).rejects.toThrow();
 });
 
 test('Throws if spawn return non-0 status', async () => {
-  spawn.__setStatus(1);
+  execa.__setShouldThrow(true);
   await expect(publish()).rejects.toThrow();
 });

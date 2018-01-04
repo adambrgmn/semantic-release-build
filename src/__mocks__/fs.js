@@ -7,7 +7,8 @@ fs.__setAccess = val => {
   fs.__accessValue = val;
 };
 
-fs.access = function access(path, opts, callback) {
+fs.access = function access(...args) {
+  const callback = args[args.length - 1];
   setImmediate(() => {
     if (fs.__accessValue) {
       callback(null);
@@ -18,10 +19,22 @@ fs.access = function access(path, opts, callback) {
   });
 };
 
-fs.realpath = function realpath(path, opts, callback) {
+fs.readFile = function readFile(...args) {
+  const callback = args[args.length - 1];
   setImmediate(() => {
-    callback(null, path);
+    callback(
+      null,
+      JSON.stringify({
+        name: 'module-name',
+        version: '0.0.0-development',
+      }),
+    );
   });
+};
+
+fs.writeFile = function writeFile(...args) {
+  const callback = args[args.length - 1];
+  setImmediate(() => callback(null));
 };
 
 fs.constants = {
